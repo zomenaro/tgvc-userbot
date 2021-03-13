@@ -36,7 +36,7 @@ def _human_time_duration(seconds):
 @Client.on_message(filters.text
                    & filters.outgoing
                    & ~filters.edited
-                   & filters.regex("^!ping$"))
+                   & filters.regex("^.ping$"))
 async def ping_pong(_, message: Message):
     """reply ping with pong and delete both messages"""
     start = time()
@@ -52,7 +52,7 @@ async def ping_pong(_, message: Message):
 @Client.on_message(filters.text
                    & filters.outgoing
                    & ~filters.edited
-                   & filters.regex("^!uptime$"))
+                   & filters.regex("^.uptime$"))
 async def get_uptime(_, message: Message):
     """/uptime Reply with readable uptime and ISO 8601 start time"""
     current_time = datetime.utcnow()
