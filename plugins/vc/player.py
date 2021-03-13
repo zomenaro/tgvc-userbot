@@ -40,7 +40,7 @@ main_filter = (
 )
 
 
-@Client.on_message(main_filter & filters.regex("^!join_vc$"))
+@Client.on_message(main_filter & filters.regex("^.join$"))
 async def join_voice_chat(client, message: Message):
     input_filename = os.path.join(client.workdir, DEFAULT_DOWNLOAD_DIR,
                                   "input.raw")
@@ -56,7 +56,7 @@ async def join_voice_chat(client, message: Message):
     await update_userbot_message(message, message.text, response)
 
 
-@Client.on_message(main_filter & filters.regex("^!leave_vc$"))
+@Client.on_message(main_filter & filters.regex("^.leave$"))
 async def leave_voice_chat(client, message: Message):
     chat_id = message.chat.id
     group_call = VOICE_CHATS[chat_id]
@@ -65,7 +65,7 @@ async def leave_voice_chat(client, message: Message):
     await update_userbot_message(message, message.text, " Left the Voice Chat")
 
 
-@Client.on_message(main_filter & filters.regex("^!list_vc$"))
+@Client.on_message(main_filter & filters.regex("^.list$"))
 async def list_voice_chat(client, message: Message):
     if not VOICE_CHATS:
         await update_userbot_message(
@@ -85,14 +85,14 @@ async def list_voice_chat(client, message: Message):
     )
 
 
-@Client.on_message(main_filter & filters.regex("^!stop$"))
+@Client.on_message(main_filter & filters.regex("^.stop$"))
 async def stop_playing(_, message: Message):
     group_call = VOICE_CHATS[message.chat.id]
     group_call.stop_playout()
     await update_userbot_message(message, message.text, " Stopped Playing")
 
 
-@Client.on_message(main_filter & filters.regex("^!replay$"))
+@Client.on_message(main_filter & filters.regex("^.replay$"))
 async def restart_playing(client, message: Message):
     input_filename = os.path.join(client.workdir, DEFAULT_DOWNLOAD_DIR,
                                   "input.raw")
@@ -116,7 +116,7 @@ async def restart_playing(client, message: Message):
     )
 
 
-@Client.on_message(main_filter & filters.regex("^!play$"))
+@Client.on_message(main_filter & filters.regex("^.play$"))
 async def play_track(client, message: Message):
     if not message.reply_to_message or not message.reply_to_message.audio:
         return
@@ -135,17 +135,7 @@ async def play_track(client, message: Message):
         ac=2, ar='48k'
     ).overwrite_output().run()
     os.remove(audio_original)
-    try:
-        async for m in client.search_messages(message.chat.id,
-                                              filter="pinned",
-                                              limit=1):
-            if m.audio:
-                await m.unpin()
-        await message.reply_to_message.pin(True)
-    except ChatAdminRequired:
-        pass
-    except FloodWait:
-        pass
+    
     if VOICE_CHATS and message.chat.id in VOICE_CHATS:
         status += f"\n- Playing **{audio.title}**..."
         await update_userbot_message(message, message.text, status)
@@ -159,14 +149,14 @@ async def play_track(client, message: Message):
         await update_userbot_message(message, message.text, status)
 
 
-@Client.on_message(main_filter & filters.regex("^!mute$"))
+@Client.on_message(main_filter & filters.regex("^.mute$"))
 async def mute(_, message: Message):
     group_call = VOICE_CHATS[message.chat.id]
     group_call.set_is_mute(True)
     await update_userbot_message(message, message.text, " Muted")
 
 
-@Client.on_message(main_filter & filters.regex("^!unmute$"))
+@Client.on_message(main_filter & filters.regex("^.unmute$"))
 async def unmute(_, message: Message):
     group_call = VOICE_CHATS[message.chat.id]
     group_call.set_is_mute(False)
